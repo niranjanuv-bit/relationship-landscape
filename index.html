@@ -1,459 +1,239 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Relationship Landscape - Discover Your Love Style</title>
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>The Relationship Landscape</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- React -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
+  <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState } = React;
+  <script type="text/babel">
+    const { useState } = React;
 
-        // Lucide React icons as inline SVG components
-        const Heart = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
+    const questions = [
+      {
+        id: "house-location",
+        title: "The House",
+        prompt: "You see a house in this landscape. Where is it?",
+        options: [
+          { label: "In an open field, easy to approach", attachment: "secure", role: "companionate" },
+          { label: "On high ground, slightly removed", attachment: "avoidant", role: "pragmatic" },
+          { label: "Hidden among trees", attachment: "fearful", role: "sacrificial" },
+          { label: "Surrounded by other houses, very close", attachment: "anxious", role: "supportive" }
+        ]
+      },
+      {
+        id: "door",
+        title: "The Door",
+        prompt: "What is the door like?",
+        options: [
+          { label: "Open or unlocked", attachment: "secure", role: "supportive" },
+          { label: "Solid and firmly closed", attachment: "avoidant", role: "pragmatic" },
+          { label: "Hidden or hard to find", attachment: "fearful", role: "sacrificial" },
+          { label: "Transparent — you can see inside", attachment: "anxious", role: "romantic" }
+        ]
+      },
+      {
+        id: "inside",
+        title: "Inside the House",
+        prompt: "What does the inside feel like?",
+        options: [
+          { label: "Warm, lived-in, comfortable", attachment: "secure", role: "companionate" },
+          { label: "Minimal and functional", attachment: "avoidant", role: "pragmatic" },
+          { label: "Cozy but guarded", attachment: "fearful", role: "sacrificial" },
+          { label: "Full of memories and reminders", attachment: "anxious", role: "romantic" }
+        ]
+      },
+      {
+        id: "distance",
+        title: "Your Distance",
+        prompt: "Where are you standing relative to the house?",
+        options: [
+          { label: "Nearby, but not attached", attachment: "secure", role: "companionate" },
+          { label: "At a comfortable distance", attachment: "avoidant", role: "pragmatic" },
+          { label: "Wanting to go closer but hesitating", attachment: "fearful", role: "sacrificial" },
+          { label: "Right at the door", attachment: "anxious", role: "passionate" }
+        ]
+      },
+      {
+        id: "person",
+        title: "Someone Appears",
+        prompt: "Someone important appears. Where are they?",
+        options: [
+          { label: "Beside you, with their own space", attachment: "secure", role: "companionate" },
+          { label: "A little away, doing their own thing", attachment: "avoidant", role: "pragmatic" },
+          { label: "Close, but uncertain", attachment: "fearful", role: "sacrificial" },
+          { label: "Very close, almost inseparable", attachment: "anxious", role: "passionate" }
+        ]
+      },
+      {
+        id: "leaving",
+        title: "They Leave",
+        prompt: "They say they’ll be gone for a while. You feel:",
+        options: [
+          { label: "You'll miss them, but you're okay", attachment: "secure", role: "companionate" },
+          { label: "Relieved to have space", attachment: "avoidant", role: "pragmatic" },
+          { label: "Worried they may change", attachment: "fearful", role: "sacrificial" },
+          { label: "Anxious and needing contact", attachment: "anxious", role: "passionate" }
+        ]
+      },
+      {
+        id: "silence",
+        title: "Silence",
+        prompt: "They don’t respond for hours. You think:",
+        options: [
+          { label: "They're busy — I'll hear later", attachment: "secure", role: "companionate" },
+          { label: "No big deal", attachment: "avoidant", role: "pragmatic" },
+          { label: "Something’s wrong", attachment: "fearful", role: "sacrificial" },
+          { label: "They're pulling away", attachment: "anxious", role: "romantic" }
+        ]
+      },
+      {
+        id: "conflict",
+        title: "Conflict",
+        prompt: "After a disagreement, you instinctively:",
+        options: [
+          { label: "Talk when both are calm", attachment: "secure", role: "companionate" },
+          { label: "Take space alone", attachment: "avoidant", role: "pragmatic" },
+          { label: "Panic about losing them", attachment: "fearful", role: "sacrificial" },
+          { label: "Fix it immediately", attachment: "anxious", role: "supportive" }
+        ]
+      },
+      {
+        id: "vulnerability",
+        title: "Vulnerability",
+        prompt: "They share something deeply personal. You feel:",
+        options: [
+          { label: "Trusted and open in return", attachment: "secure", role: "companionate" },
+          { label: "Slightly uncomfortable", attachment: "avoidant", role: "pragmatic" },
+          { label: "Scared of expectations", attachment: "fearful", role: "sacrificial" },
+          { label: "Deeply bonded", attachment: "anxious", role: "passionate" }
+        ]
+      },
+      {
+        id: "love",
+        title: "Showing Love",
+        prompt: "You most naturally show love by:",
+        options: [
+          { label: "Being consistently present", attachment: "secure", role: "companionate" },
+          { label: "Solving problems together", attachment: "avoidant", role: "pragmatic" },
+          { label: "Putting their needs first", attachment: "fearful", role: "sacrificial" },
+          { label: "Affection and reassurance", attachment: "anxious", role: "romantic" }
+        ]
+      },
+      {
+        id: "struggle",
+        title: "Their Hard Day",
+        prompt: "Your partner is struggling. You:",
+        options: [
+          { label: "Listen and support", attachment: "secure", role: "supportive" },
+          { label: "Offer solutions", attachment: "avoidant", role: "pragmatic" },
+          { label: "Absorb their pain", attachment: "fearful", role: "sacrificial" },
+          { label: "Feel it intensely", attachment: "anxious", role: "passionate" }
+        ]
+      },
+      {
+        id: "ideal",
+        title: "The Ideal Relationship",
+        prompt: "At its best, love feels like:",
+        options: [
+          { label: "Deep friendship", attachment: "secure", role: "companionate" },
+          { label: "A strong life partnership", attachment: "avoidant", role: "pragmatic" },
+          { label: "Devotion without limits", attachment: "fearful", role: "sacrificial" },
+          { label: "Ongoing romance and intensity", attachment: "anxious", role: "romantic" }
+        ]
+      }
+    ];
+
+    function App() {
+      const [step, setStep] = useState(0);
+      const [answers, setAnswers] = useState([]);
+      const [result, setResult] = useState(null);
+
+      const handleAnswer = (opt) => {
+        const next = [...answers, opt];
+        setAnswers(next);
+
+        if (step < questions.length - 1) {
+          setStep(step + 1);
+        } else {
+          calculate(next);
+        }
+      };
+
+      const calculate = (answers) => {
+        const attachment = {};
+        const role = {};
+
+        answers.forEach(a => {
+          attachment[a.attachment] = (attachment[a.attachment] || 0) + 1;
+          role[a.role] = (role[a.role] || 0) + 1;
+        });
+
+        const topAttachment = Object.entries(attachment).sort((a,b)=>b[1]-a[1])[0][0];
+        const topRole = Object.entries(role).sort((a,b)=>b[1]-a[1])[0][0];
+
+        setResult({ attachment: topAttachment, role: topRole });
+      };
+
+      if (result) {
+        return (
+          <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+            <h1 className="text-3xl font-bold text-center mb-4">Your Relationship Landscape</h1>
+            <p className="text-lg text-center mb-2"><strong>Attachment Style:</strong> {result.attachment}</p>
+            <p className="text-lg text-center mb-6"><strong>Relationship Role:</strong> {result.role}</p>
+            <button
+              className="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold"
+              onClick={() => { setStep(0); setAnswers([]); setResult(null); }}
+            >
+              Take Again
+            </button>
+          </div>
         );
+      }
 
-        const Home = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-        );
+      const q = questions[step];
 
-        const Mountain = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3l7 18 7-18M9 12h6" />
-            </svg>
-        );
+      return (
+        <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+          <div className="mb-4 text-sm text-gray-500">Question {step + 1} of {questions.length}</div>
+          <h2 className="text-2xl font-bold mb-2">{q.title}</h2>
+          <p className="text-gray-600 mb-6">{q.prompt}</p>
+          <div className="space-y-3">
+            {q.options.map((o, i) => (
+              <button
+                key={i}
+                onClick={() => handleAnswer(o)}
+                className="w-full text-left p-4 border rounded-lg hover:bg-purple-50 hover:border-purple-400"
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
 
-        const Sun = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-        );
-
-        const Cloud = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-            </svg>
-        );
-
-        const Flower = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        );
-
-        const Users = ({ className }) => (
-            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-        );
-
-        const RelationshipLandscapeGame = () => {
-            const [step, setStep] = useState(0);
-            const [answers, setAnswers] = useState({});
-            const [results, setResults] = useState(null);
-
-            const questions = [
-                {
-                    id: 'house',
-                    title: 'Imagine a House',
-                    prompt: 'Picture a house in your mind. Where is it?',
-                    icon: Home,
-                    options: [
-                        { value: 'center', label: 'In the center of an open field - visible from all sides', traits: ['secure'] },
-                        { value: 'hill', label: 'On top of a hill - elevated and somewhat distant', traits: ['avoidant'] },
-                        { value: 'forest', label: 'Hidden in a forest - private and protected', traits: ['fearful'] },
-                        { value: 'village', label: 'Among other houses in a village - connected and close', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'door',
-                    title: 'The Door',
-                    prompt: 'How is the door to this house?',
-                    icon: Home,
-                    options: [
-                        { value: 'wide-open', label: 'Wide open with a welcome mat', traits: ['secure'] },
-                        { value: 'locked', label: 'Locked with a peephole', traits: ['avoidant'] },
-                        { value: 'hidden', label: 'Hard to find or disguised', traits: ['fearful'] },
-                        { value: 'glass', label: 'Large glass windows - you can see if anyone is there', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'walls',
-                    title: 'The Walls',
-                    prompt: 'What are the walls of the house like?',
-                    icon: Home,
-                    options: [
-                        { value: 'normal', label: 'Normal walls with some windows - balanced privacy and openness', traits: ['secure'] },
-                        { value: 'thick', label: 'Thick stone walls - strong boundaries', traits: ['avoidant'] },
-                        { value: 'reinforced', label: 'Reinforced but with an alarm system - protected but anxious', traits: ['fearful'] },
-                        { value: 'thin', label: 'Thin walls - you can hear what\'s happening around you', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'distance',
-                    title: 'The Distance',
-                    prompt: 'When you imagine a loved one, where do you picture them?',
-                    icon: Heart,
-                    options: [
-                        { value: 'nearby', label: 'Nearby but with their own space - close but separate', traits: ['secure'] },
-                        { value: 'far', label: 'In the distance - you can see them but they\'re not too close', traits: ['avoidant'] },
-                        { value: 'hiding', label: 'You want them close but you\'re hiding inside', traits: ['fearful'] },
-                        { value: 'very-close', label: 'Right next to you - constant presence', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'phone',
-                    title: 'The Phone Call',
-                    prompt: 'Your phone rings with an unknown number. What do you do?',
-                    icon: Users,
-                    options: [
-                        { value: 'answer', label: 'Answer it - could be something interesting', traits: ['secure'] },
-                        { value: 'ignore', label: 'Let it go to voicemail - they can leave a message', traits: ['avoidant'] },
-                        { value: 'anxious', label: 'Feel anxious - could be bad news or rejection', traits: ['fearful'] },
-                        { value: 'hope', label: 'Hope it\'s someone you know reaching out', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'departure',
-                    title: 'The Departure',
-                    prompt: 'Someone you care about is leaving for a trip. How do you feel?',
-                    icon: Cloud,
-                    options: [
-                        { value: 'fine', label: 'You\'ll miss them but you\'re fine - excited to hear their stories', traits: ['secure'] },
-                        { value: 'relieved', label: 'A bit relieved - you enjoy your alone time', traits: ['avoidant'] },
-                        { value: 'worried', label: 'Worried they might not come back or might change', traits: ['fearful'] },
-                        { value: 'upset', label: 'Upset and wanting constant contact while they\'re gone', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'conflict',
-                    title: 'The Disagreement',
-                    prompt: 'After a small argument with someone close, what\'s your instinct?',
-                    icon: Cloud,
-                    options: [
-                        { value: 'talk', label: 'Talk it through calmly when you\'re both ready', traits: ['secure'] },
-                        { value: 'withdraw', label: 'Need space and time alone to process', traits: ['avoidant'] },
-                        { value: 'panic', label: 'Panic that the relationship is ending', traits: ['fearful'] },
-                        { value: 'fix', label: 'Try to fix it immediately - can\'t stand the tension', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'vulnerability',
-                    title: 'The Secret',
-                    prompt: 'Someone shares something deeply personal with you. Your reaction?',
-                    icon: Heart,
-                    options: [
-                        { value: 'honored', label: 'Feel honored and share something similar back', traits: ['secure'] },
-                        { value: 'uncomfortable', label: 'Feel a bit uncomfortable - that\'s a lot of intimacy', traits: ['avoidant'] },
-                        { value: 'scared', label: 'Feel scared - will they expect the same from you?', traits: ['fearful'] },
-                        { value: 'closer', label: 'Feel intensely closer - this is what you\'ve been waiting for', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'texts',
-                    title: 'The Message',
-                    prompt: 'Someone you\'re dating hasn\'t texted back in a few hours. You think:',
-                    icon: Users,
-                    options: [
-                        { value: 'busy', label: 'They\'re probably busy - I\'ll hear from them later', traits: ['secure'] },
-                        { value: 'fine', label: 'That\'s fine - I\'m not checking my phone constantly either', traits: ['avoidant'] },
-                        { value: 'wrong', label: 'Something\'s wrong - did I say something bad?', traits: ['fearful'] },
-                        { value: 'upset', label: 'Feel hurt and keep checking your phone', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'commitment',
-                    title: 'The Next Step',
-                    prompt: 'A relationship is getting more serious. Your honest reaction?',
-                    icon: Heart,
-                    options: [
-                        { value: 'excited', label: 'Excited if it feels right - you\'re ready when you\'re ready', traits: ['secure'] },
-                        { value: 'trapped', label: 'Feel a bit trapped - you need your freedom', traits: ['avoidant'] },
-                        { value: 'terrified', label: 'Want it deeply but also terrified of getting hurt', traits: ['fearful'] },
-                        { value: 'finally', label: 'Finally! You\'ve been waiting for this commitment', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'alone-time',
-                    title: 'Solo Evening',
-                    prompt: 'You have an unexpected free evening alone. You feel:',
-                    icon: Sun,
-                    options: [
-                        { value: 'content', label: 'Content - you enjoy both alone time and company', traits: ['secure'] },
-                        { value: 'perfect', label: 'Perfect - this is when you recharge', traits: ['avoidant'] },
-                        { value: 'isolated', label: 'Isolated and wondering if people forgot about you', traits: ['fearful'] },
-                        { value: 'lonely', label: 'Lonely - you start reaching out to people', traits: ['anxious'] }
-                    ]
-                },
-                {
-                    id: 'intimacy',
-                    title: 'The Closeness',
-                    prompt: 'When someone wants to be very emotionally close, you:',
-                    icon: Heart,
-                    options: [
-                        { value: 'comfortable', label: 'Feel comfortable as long as it\'s mutual and healthy', traits: ['secure'] },
-                        { value: 'suffocated', label: 'Feel suffocated - you need breathing room', traits: ['avoidant'] },
-                        { value: 'suspicious', label: 'Want it but don\'t trust it - what do they really want?', traits: ['fearful'] },
-                        { value: 'grateful', label: 'Feel grateful and want even more closeness', traits: ['anxious'] }
-                    ]
-                }
-            ];
-
-            const analyzeResults = () => {
-                const traitCounts = {
-                    secure: 0,
-                    anxious: 0,
-                    avoidant: 0,
-                    fearful: 0
-                };
-                
-                Object.values(answers).forEach(answer => {
-                    answer.traits.forEach(trait => {
-                        if (traitCounts.hasOwnProperty(trait)) {
-                            traitCounts[trait] = traitCounts[trait] + 1;
-                        }
-                    });
-                });
-
-                const attachmentMap = {
-                    secure: { style: 'Secure', color: 'green' },
-                    anxious: { style: 'Anxious-Preoccupied', color: 'yellow' },
-                    avoidant: { style: 'Dismissive-Avoidant', color: 'blue' },
-                    fearful: { style: 'Fearful-Avoidant', color: 'purple' }
-                };
-
-                // Get primary and secondary attachment styles
-                const sortedAttachments = Object.entries(traitCounts)
-                    .sort((a, b) => b[1] - a[1]);
-                
-                const primaryAttachment = sortedAttachments[0];
-                const secondaryAttachment = sortedAttachments[1];
-
-                // Calculate percentages
-                const total = Object.values(traitCounts).reduce((sum, val) => sum + val, 0);
-                const percentages = {};
-                Object.keys(traitCounts).forEach(key => {
-                    percentages[key] = total > 0 ? Math.round((traitCounts[key] / total) * 100) : 0;
-                });
-
-                return {
-                    attachment: attachmentMap[primaryAttachment[0]],
-                    secondary: secondaryAttachment[1] > 0 ? attachmentMap[secondaryAttachment[0]] : null,
-                    scores: traitCounts,
-                    percentages: percentages,
-                    details: generateDetailedAnalysis(primaryAttachment[0], secondaryAttachment[0], traitCounts)
-                };
-            };
-
-            const generateDetailedAnalysis = (primary, secondary, scores) => {
-                const analyses = {
-                    secure: {
-                        title: 'The Secure Lover',
-                        strengths: 'You have a stable sense of self and can balance closeness with independence. You trust others and feel comfortable being vulnerable. You communicate openly and don\'t fear abandonment or engulfment.',
-                        challenges: 'Sometimes you may underestimate how much reassurance others need, or be surprised when partners struggle with intimacy that feels natural to you.',
-                        inRelationships: 'You give and receive love freely, creating relationships where both partners can flourish. You\'re comfortable with both closeness and independence, making you an easy partner to be with.',
-                        growth: 'Continue nurturing open communication and remember that not everyone shares your secure foundation. Your patience and modeling can help anxious or avoidant partners feel safer.'
-                    },
-                    anxious: {
-                        title: 'The Anxious-Preoccupied Lover',
-                        strengths: 'You feel deeply and are highly attuned to your partner\'s needs and moods. Your devotion and emotional availability are powerful gifts. You\'re not afraid to pursue connection and express your feelings.',
-                        challenges: 'Fear of abandonment can lead to seeking constant reassurance, which may push partners away. You may struggle with self-soothing when a partner needs space, interpreting their need for independence as rejection.',
-                        inRelationships: 'You love with your whole heart and crave deep emotional intimacy. You\'re happiest when you feel securely connected and may become distressed when you perceive distance. You may overanalyze communications and seek frequent reassurance.',
-                        growth: 'Learning to self-soothe and building security from within will transform your relationships. Your worth isn\'t determined by another\'s attention. Practice trusting that love doesn\'t require constant proof, and that space doesn\'t mean abandonment.'
-                    },
-                    avoidant: {
-                        title: 'The Dismissive-Avoidant Lover',
-                        strengths: 'You\'re independent and self-sufficient, with strong boundaries. You bring stability and don\'t lose yourself in relationships. You value your autonomy and can be counted on to maintain your own identity.',
-                        challenges: 'Difficulty with vulnerability and emotional intimacy can leave partners feeling shut out. You may withdraw when things get too close, preferring to handle emotions alone. Commitment can feel threatening to your independence.',
-                        inRelationships: 'You value your independence highly and may feel uncomfortable when partners want more closeness than you\'re ready for. You can love deeply when you feel safe, but often keep an emotional distance as protection.',
-                        growth: 'Practice letting people in gradually. Vulnerability isn\'t weakness—it\'s the gateway to deeper intimacy. Creating space for closeness without losing autonomy is your journey. Your partners aren\'t trying to trap you; they\'re trying to connect.'
-                    },
-                    fearful: {
-                        title: 'The Fearful-Avoidant Lover',
-                        strengths: 'You\'re deeply sensitive and aware of relationship dynamics. Your caution protects you from repeating past hurts. When you do let someone in, your love is profound. You understand both the longing for connection and the fear of vulnerability.',
-                        challenges: 'You experience an internal conflict: desperately wanting closeness while simultaneously fearing it. You may push people away when they get too close, then panic when they actually leave. Trust is extremely difficult to build.',
-                        inRelationships: 'You want connection but fear it too. You may feel torn between craving intimacy and feeling terrified of it. Past wounds make it hard to trust that love is safe. You might test partners or self-sabotage when things get too good.',
-                        growth: 'Healing old wounds helps you approach new love with less fear. Not everyone will hurt you the way you\'ve been hurt before. Finding partners who move at your pace, honor your needs, and prove consistent over time can help you learn that love can be safe. Therapy can be especially helpful for your attachment style.'
-                    }
-                };
-
-                return analyses[primary] || analyses.secure;
-            };
-
-            const handleAnswer = (answer) => {
-                setAnswers({ ...answers, [questions[step].id]: answer });
-                
-                if (step < questions.length - 1) {
-                    setStep(step + 1);
-                } else {
-                    setResults(analyzeResults());
-                }
-            };
-
-            const restart = () => {
-                setStep(0);
-                setAnswers({});
-                setResults(null);
-            };
-
-            if (results) {
-                const colors = {
-                    green: 'bg-green-50 border-green-200',
-                    yellow: 'bg-yellow-50 border-yellow-200',
-                    blue: 'bg-blue-50 border-blue-200',
-                    purple: 'bg-purple-50 border-purple-200'
-                };
-
-                return (
-                    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-                        <div className="text-center mb-8">
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">Your Relationship Landscape</h1>
-                            <p className="text-gray-600">Based on the world you imagined</p>
-                        </div>
-
-                        <div className={`p-6 rounded-lg border-2 mb-6 ${colors[results.attachment.color]}`}>
-                            <h2 className="text-2xl font-bold mb-2">Your Attachment Style: {results.attachment.style}</h2>
-                            <h3 className="text-lg font-semibold text-gray-700 mb-4">{results.details.title}</h3>
-                            
-                            {/* Score breakdown */}
-                            <div className="bg-white bg-opacity-50 p-4 rounded-lg mb-4">
-                                <h4 className="font-semibold text-gray-700 mb-2">Your Attachment Pattern:</h4>
-                                <div className="space-y-2">
-                                    {Object.entries(results.percentages).map(([style, percent]) => (
-                                        <div key={style}>
-                                            <div className="flex justify-between mb-1">
-                                                <span className="text-sm capitalize">{style.replace('-', ' ')}</span>
-                                                <span className="text-sm font-semibold">{percent}%</span>
-                                            </div>
-                                            <div className="w-full bg-gray-200 rounded-full h-2">
-                                                <div 
-                                                    className={`h-2 rounded-full ${
-                                                        style === 'secure' ? 'bg-green-500' :
-                                                        style === 'anxious' ? 'bg-yellow-500' :
-                                                        style === 'avoidant' ? 'bg-blue-500' :
-                                                        'bg-purple-500'
-                                                    }`}
-                                                    style={{ width: `${percent}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="space-y-4 mt-4">
-                                <div>
-                                    <h3 className="font-semibold text-gray-700">Your Strengths:</h3>
-                                    <p className="text-gray-600">{results.details.strengths}</p>
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-700">Your Challenges:</h3>
-                                    <p className="text-gray-600">{results.details.challenges}</p>
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-700">In Relationships:</h3>
-                                    <p className="text-gray-600">{results.details.inRelationships}</p>
-                                </div>
-                                <div>
-                                    <h3 className="font-semibold text-gray-700">Path to Growth:</h3>
-                                    <p className="text-gray-600">{results.details.growth}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
-                            <p className="text-sm text-gray-700">
-                                <strong>Remember:</strong> These patterns are tendencies, not destiny. Attachment styles can heal and evolve with self-awareness, therapy, and secure relationships. 
-                                The awareness you gain here is the first step toward choosing how you want to love.
-                            </p>
-                        </div>
-
-                        {results.secondary && results.percentages[results.secondary.style.toLowerCase().split('-')[0]] > 25 && (
-                            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 mb-6">
-                                <p className="text-sm text-gray-700">
-                                    <strong>Note:</strong> You also showed significant traits of {results.secondary.style} attachment ({results.percentages[results.secondary.style.toLowerCase().split('-')[0]]}%). 
-                                    Many people exhibit a blend of attachment styles, or may shift between styles depending on the relationship or life circumstances.
-                                </p>
-                            </div>
-                        )}
-
-                        <button 
-                            onClick={restart}
-                            className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition"
-                        >
-                            Take the Test Again
-                        </button>
-                    </div>
-                );
-            }
-
-            const currentQuestion = questions[step];
-            const Icon = currentQuestion.icon;
-
-            return (
-                <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-                    <div className="mb-6">
-                        <div className="flex justify-between items-center mb-4">
-                            <h1 className="text-2xl font-bold text-gray-800">The Relationship Landscape</h1>
-                            <span className="text-sm text-gray-500">Question {step + 1} of 12</span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                            <div 
-                                className="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${((step + 1) / questions.length) * 100}%` }}
-                            />
-                        </div>
-                    </div>
-
-                    <div className="text-center mb-8">
-                        <Icon className="w-16 h-16 mx-auto mb-4 text-purple-500" />
-                        <h2 className="text-2xl font-bold text-gray-800 mb-2">{currentQuestion.title}</h2>
-                        <p className="text-gray-600 text-lg">{currentQuestion.prompt}</p>
-                    </div>
-
-                    <div className="space-y-3">
-                        {currentQuestion.options.map((option, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleAnswer(option)}
-                                className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200 group"
-                            >
-                                <span className="text-gray-800 group-hover:text-purple-700 font-medium">
-                                    {option.label}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="mt-6 text-center text-sm text-gray-500">
-                        Choose the answer that feels most natural to you
-                    </div>
-                </div>
-            );
-        };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<RelationshipLandscapeGame />);
-    </script>
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
 </body>
 </html>
