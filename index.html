@@ -24,216 +24,229 @@
   </style>
 </head>
 <body>
-  <div id="root"></div>
+<div id="root"></div>
 
-  <script type="text/babel">
-    const { useState } = React;
+<script type="text/babel">
+const { useState } = React;
 
-    const questions = [
-      {
-        id: "house-location",
-        title: "The House",
-        prompt: "You see a house in this landscape. Where is it?",
-        options: [
-          { label: "In an open field, easy to approach", attachment: "secure", role: "companionate" },
-          { label: "On high ground, slightly removed", attachment: "avoidant", role: "pragmatic" },
-          { label: "Hidden among trees", attachment: "fearful", role: "sacrificial" },
-          { label: "Surrounded by other houses, very close", attachment: "anxious", role: "supportive" }
-        ]
-      },
-      {
-        id: "door",
-        title: "The Door",
-        prompt: "What is the door like?",
-        options: [
-          { label: "Open or unlocked", attachment: "secure", role: "supportive" },
-          { label: "Solid and firmly closed", attachment: "avoidant", role: "pragmatic" },
-          { label: "Hidden or hard to find", attachment: "fearful", role: "sacrificial" },
-          { label: "Transparent — you can see inside", attachment: "anxious", role: "romantic" }
-        ]
-      },
-      {
-        id: "inside",
-        title: "Inside the House",
-        prompt: "What does the inside feel like?",
-        options: [
-          { label: "Warm, lived-in, comfortable", attachment: "secure", role: "companionate" },
-          { label: "Minimal and functional", attachment: "avoidant", role: "pragmatic" },
-          { label: "Cozy but guarded", attachment: "fearful", role: "sacrificial" },
-          { label: "Full of memories and reminders", attachment: "anxious", role: "romantic" }
-        ]
-      },
-      {
-        id: "distance",
-        title: "Your Distance",
-        prompt: "Where are you standing relative to the house?",
-        options: [
-          { label: "Nearby, but not attached", attachment: "secure", role: "companionate" },
-          { label: "At a comfortable distance", attachment: "avoidant", role: "pragmatic" },
-          { label: "Wanting to go closer but hesitating", attachment: "fearful", role: "sacrificial" },
-          { label: "Right at the door", attachment: "anxious", role: "passionate" }
-        ]
-      },
-      {
-        id: "person",
-        title: "Someone Appears",
-        prompt: "Someone important appears. Where are they?",
-        options: [
-          { label: "Beside you, with their own space", attachment: "secure", role: "companionate" },
-          { label: "A little away, doing their own thing", attachment: "avoidant", role: "pragmatic" },
-          { label: "Close, but uncertain", attachment: "fearful", role: "sacrificial" },
-          { label: "Very close, almost inseparable", attachment: "anxious", role: "passionate" }
-        ]
-      },
-      {
-        id: "leaving",
-        title: "They Leave",
-        prompt: "They say they’ll be gone for a while. You feel:",
-        options: [
-          { label: "You'll miss them, but you're okay", attachment: "secure", role: "companionate" },
-          { label: "Relieved to have space", attachment: "avoidant", role: "pragmatic" },
-          { label: "Worried they may change", attachment: "fearful", role: "sacrificial" },
-          { label: "Anxious and needing contact", attachment: "anxious", role: "passionate" }
-        ]
-      },
-      {
-        id: "silence",
-        title: "Silence",
-        prompt: "They don’t respond for hours. You think:",
-        options: [
-          { label: "They're busy — I'll hear later", attachment: "secure", role: "companionate" },
-          { label: "No big deal", attachment: "avoidant", role: "pragmatic" },
-          { label: "Something’s wrong", attachment: "fearful", role: "sacrificial" },
-          { label: "They're pulling away", attachment: "anxious", role: "romantic" }
-        ]
-      },
-      {
-        id: "conflict",
-        title: "Conflict",
-        prompt: "After a disagreement, you instinctively:",
-        options: [
-          { label: "Talk when both are calm", attachment: "secure", role: "companionate" },
-          { label: "Take space alone", attachment: "avoidant", role: "pragmatic" },
-          { label: "Panic about losing them", attachment: "fearful", role: "sacrificial" },
-          { label: "Fix it immediately", attachment: "anxious", role: "supportive" }
-        ]
-      },
-      {
-        id: "vulnerability",
-        title: "Vulnerability",
-        prompt: "They share something deeply personal. You feel:",
-        options: [
-          { label: "Trusted and open in return", attachment: "secure", role: "companionate" },
-          { label: "Slightly uncomfortable", attachment: "avoidant", role: "pragmatic" },
-          { label: "Scared of expectations", attachment: "fearful", role: "sacrificial" },
-          { label: "Deeply bonded", attachment: "anxious", role: "passionate" }
-        ]
-      },
-      {
-        id: "love",
-        title: "Showing Love",
-        prompt: "You most naturally show love by:",
-        options: [
-          { label: "Being consistently present", attachment: "secure", role: "companionate" },
-          { label: "Solving problems together", attachment: "avoidant", role: "pragmatic" },
-          { label: "Putting their needs first", attachment: "fearful", role: "sacrificial" },
-          { label: "Affection and reassurance", attachment: "anxious", role: "romantic" }
-        ]
-      },
-      {
-        id: "struggle",
-        title: "Their Hard Day",
-        prompt: "Your partner is struggling. You:",
-        options: [
-          { label: "Listen and support", attachment: "secure", role: "supportive" },
-          { label: "Offer solutions", attachment: "avoidant", role: "pragmatic" },
-          { label: "Absorb their pain", attachment: "fearful", role: "sacrificial" },
-          { label: "Feel it intensely", attachment: "anxious", role: "passionate" }
-        ]
-      },
-      {
-        id: "ideal",
-        title: "The Ideal Relationship",
-        prompt: "At its best, love feels like:",
-        options: [
-          { label: "Deep friendship", attachment: "secure", role: "companionate" },
-          { label: "A strong life partnership", attachment: "avoidant", role: "pragmatic" },
-          { label: "Devotion without limits", attachment: "fearful", role: "sacrificial" },
-          { label: "Ongoing romance and intensity", attachment: "anxious", role: "romantic" }
-        ]
-      }
-    ];
+/* ---------------- ROLE DEFINITIONS ---------------- */
 
-    function App() {
-      const [step, setStep] = useState(0);
-      const [answers, setAnswers] = useState([]);
-      const [result, setResult] = useState(null);
+const ROLE_DETAILS = {
+  companionate: {
+    title: "The Companionate Lover",
+    essence: "You show love by building comfort, friendship, and emotional ease.",
+    strength: "You create stable, low-drama relationships that last.",
+    risk: "Comfort can slide into complacency if you stop actively nurturing connection."
+  },
+  supportive: {
+    title: "The Supportive Lover",
+    essence: "You show love by being emotionally present and encouraging growth.",
+    strength: "You help partners feel safe, seen, and supported.",
+    risk: "You may carry too much emotional weight and neglect your own needs."
+  },
+  passionate: {
+    title: "The Passionate Lover",
+    essence: "You show love with intensity, energy, and deep emotional engagement.",
+    strength: "You make relationships feel alive and deeply meaningful.",
+    risk: "Intensity can overwhelm partners or burn you out if not grounded."
+  },
+  romantic: {
+    title: "The Romantic Lover",
+    essence: "You express love through affection, reassurance, and emotional closeness.",
+    strength: "You help partners feel deeply desired and emotionally connected.",
+    risk: "You may rely on external reassurance instead of inner security."
+  },
+  pragmatic: {
+    title: "The Pragmatic Lover",
+    essence: "You show love by building a life, solving problems, and planning ahead.",
+    strength: "You create reliable, functional partnerships.",
+    risk: "Emotional expression can get overshadowed by practicality."
+  },
+  sacrificial: {
+    title: "The Sacrificial Lover",
+    essence: "You love by putting your partner’s needs above your own.",
+    strength: "Your devotion creates deep loyalty and care.",
+    risk: "You may lose yourself or tolerate unhealthy dynamics."
+  }
+};
 
-      const handleAnswer = (opt) => {
-        const next = [...answers, opt];
-        setAnswers(next);
+/* ---------------- QUESTIONS ---------------- */
 
-        if (step < questions.length - 1) {
-          setStep(step + 1);
-        } else {
-          calculate(next);
-        }
-      };
+const questions = [
+  {
+    title: "The House",
+    prompt: "You see a house in this landscape. Where is it?",
+    options: [
+      { label: "In an open field, easy to approach", attachment: "secure", role: "supportive" },
+      { label: "On high ground, slightly removed", attachment: "avoidant", role: "pragmatic" },
+      { label: "Hidden among trees", attachment: "fearful", role: "sacrificial" },
+      { label: "Surrounded by other houses, very close", attachment: "anxious", role: "companionate" }
+    ]
+  },
+  {
+    title: "The Door",
+    prompt: "What is the door like?",
+    options: [
+      { label: "Open or unlocked", attachment: "secure", role: "romantic" },
+      { label: "Solid and firmly closed", attachment: "avoidant", role: "pragmatic" },
+      { label: "Hidden or hard to find", attachment: "fearful", role: "sacrificial" },
+      { label: "Transparent — you can see inside", attachment: "anxious", role: "supportive" }
+    ]
+  },
+  {
+    title: "Inside the House",
+    prompt: "What does the inside feel like?",
+    options: [
+      { label: "Warm, lived-in, comfortable", attachment: "secure", role: "companionate" },
+      { label: "Minimal and functional", attachment: "avoidant", role: "pragmatic" },
+      { label: "Cozy but guarded", attachment: "fearful", role: "sacrificial" },
+      { label: "Full of memories and reminders", attachment: "anxious", role: "romantic" }
+    ]
+  },
+  {
+    title: "Your Distance",
+    prompt: "Where are you standing relative to the house?",
+    options: [
+      { label: "Nearby, with your own space", attachment: "secure", role: "companionate" },
+      { label: "At a comfortable distance", attachment: "avoidant", role: "supportive" },
+      { label: "Wanting to go closer but hesitating", attachment: "fearful", role: "sacrificial" },
+      { label: "Right at the door", attachment: "anxious", role: "passionate" }
+    ]
+  },
+  {
+    title: "Someone Appears",
+    prompt: "Someone important appears. Where are they?",
+    options: [
+      { label: "Beside you, energized by your presence", attachment: "secure", role: "passionate" },
+      { label: "Nearby but doing their own thing", attachment: "avoidant", role: "companionate" },
+      { label: "Close, but uncertain", attachment: "fearful", role: "sacrificial" },
+      { label: "Very close, seeking reassurance", attachment: "anxious", role: "romantic" }
+    ]
+  },
+  {
+    title: "Ideal Relationship",
+    prompt: "At its best, love feels like:",
+    options: [
+      { label: "A deep friendship", attachment: "secure", role: "companionate" },
+      { label: "A strong life partnership", attachment: "avoidant", role: "pragmatic" },
+      { label: "Unconditional devotion", attachment: "fearful", role: "sacrificial" },
+      { label: "Ongoing romance and spark", attachment: "anxious", role: "romantic" }
+    ]
+  }
+];
 
-      const calculate = (answers) => {
-        const attachment = {};
-        const role = {};
+/* ---------------- APP ---------------- */
 
-        answers.forEach(a => {
-          attachment[a.attachment] = (attachment[a.attachment] || 0) + 1;
-          role[a.role] = (role[a.role] || 0) + 1;
-        });
+function App() {
+  const [step, setStep] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [result, setResult] = useState(null);
 
-        const topAttachment = Object.entries(attachment).sort((a,b)=>b[1]-a[1])[0][0];
-        const topRole = Object.entries(role).sort((a,b)=>b[1]-a[1])[0][0];
+  const handleAnswer = (opt) => {
+    const next = [...answers, opt];
+    setAnswers(next);
 
-        setResult({ attachment: topAttachment, role: topRole });
-      };
-
-      if (result) {
-        return (
-          <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-            <h1 className="text-3xl font-bold text-center mb-4">Your Relationship Landscape</h1>
-            <p className="text-lg text-center mb-2"><strong>Attachment Style:</strong> {result.attachment}</p>
-            <p className="text-lg text-center mb-6"><strong>Relationship Role:</strong> {result.role}</p>
-            <button
-              className="w-full py-3 bg-purple-600 text-white rounded-lg font-semibold"
-              onClick={() => { setStep(0); setAnswers([]); setResult(null); }}
-            >
-              Take Again
-            </button>
-          </div>
-        );
-      }
-
-      const q = questions[step];
-
-      return (
-        <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
-          <div className="mb-4 text-sm text-gray-500">Question {step + 1} of {questions.length}</div>
-          <h2 className="text-2xl font-bold mb-2">{q.title}</h2>
-          <p className="text-gray-600 mb-6">{q.prompt}</p>
-          <div className="space-y-3">
-            {q.options.map((o, i) => (
-              <button
-                key={i}
-                onClick={() => handleAnswer(o)}
-                className="w-full text-left p-4 border rounded-lg hover:bg-purple-50 hover:border-purple-400"
-              >
-                {o.label}
-              </button>
-            ))}
-          </div>
-        </div>
-      );
+    if (step < questions.length - 1) {
+      setStep(step + 1);
+    } else {
+      calculate(next);
     }
+  };
 
-    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
-  </script>
+  const calculate = (answers) => {
+    const roleCounts = {};
+    answers.forEach(a => {
+      roleCounts[a.role] = (roleCounts[a.role] || 0) + 1;
+    });
+
+    const sortedRoles = Object.entries(roleCounts).sort((a,b) => b[1] - a[1]);
+    const primary = sortedRoles[0];
+    const secondary = sortedRoles[1];
+
+    const secondaryRole =
+      secondary && secondary[1] >= primary[1] * 0.75
+        ? secondary[0]
+        : null;
+
+    setResult({
+      primaryRole: primary[0],
+      secondaryRole
+    });
+  };
+
+  if (result) {
+    const role = ROLE_DETAILS[result.primaryRole];
+    const secondary = result.secondaryRole
+      ? ROLE_DETAILS[result.secondaryRole]
+      : null;
+
+    return (
+      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+        <h1 className="text-3xl font-bold text-center mb-6">
+          Your Relationship Role
+        </h1>
+
+        <h2 className="text-xl font-semibold text-center">
+          {role.title}
+        </h2>
+
+        <p className="text-gray-600 text-center mt-2">
+          {role.essence}
+        </p>
+
+        <div className="mt-6 space-y-3">
+          <p><strong>Your strength:</strong> {role.strength}</p>
+          <p><strong>Watch out for:</strong> {role.risk}</p>
+        </div>
+
+        {secondary && (
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-700">
+              <strong>You also show traits of:</strong> {secondary.title}
+            </p>
+          </div>
+        )}
+
+        <button
+          className="w-full mt-6 py-3 bg-purple-600 text-white rounded-lg font-semibold"
+          onClick={() => {
+            setStep(0);
+            setAnswers([]);
+            setResult(null);
+          }}
+        >
+          Take Again
+        </button>
+      </div>
+    );
+  }
+
+  const q = questions[step];
+
+  return (
+    <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-lg">
+      <div className="mb-4 text-sm text-gray-500">
+        Question {step + 1} of {questions.length}
+      </div>
+      <h2 className="text-2xl font-bold mb-2">{q.title}</h2>
+      <p className="text-gray-600 mb-6">{q.prompt}</p>
+
+      <div className="space-y-3">
+        {q.options.map((o, i) => (
+          <button
+            key={i}
+            onClick={() => handleAnswer(o)}
+            className="w-full text-left p-4 border rounded-lg hover:bg-purple-50 hover:border-purple-400"
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
 </body>
 </html>
