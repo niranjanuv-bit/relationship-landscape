@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Relationship Landscape - Discover Your Love Style</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // Lucide React icons as inline SVG components
+        const Heart = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+        );
+
+        const Home = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+        );
+
+        const Mountain = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3l7 18 7-18M9 12h6" />
+            </svg>
+        );
+
+        const Sun = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        );
+
+        const Cloud = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+            </svg>
+        );
+
+        const Flower = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        );
+
+        const Users = ({ className }) => (
+            <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+        );
+
+        const RelationshipLandscapeGame = () => {
+            const [step, setStep] = useState(0);
+            const [answers, setAnswers] = useState({});
+            const [results, setResults] = useState(null);
+
+            const questions = [
+                {
+                    id: 'house',
+                    title: 'Imagine a House',
+                    prompt: 'Picture a house in your mind. Where is it?',
+                    icon: Home,
+                    options: [
+                        { value: 'center', label: 'In the center of an open field - visible from all sides', traits: ['secure', 'open'] },
+                        { value: 'hill', label: 'On top of a hill - elevated and somewhat distant', traits: ['avoidant', 'independent'] },
+                        { value: 'forest', label: 'Hidden in a forest - private and protected', traits: ['fearful', 'guarded'] },
+                        { value: 'village', label: 'Among other houses in a village - connected and close', traits: ['anxious', 'communal'] }
+                    ]
+                },
+                {
+                    id: 'door',
+                    title: 'The Door',
+                    prompt: 'How is the door to this house?',
+                    icon: Home,
+                    options: [
+                        { value: 'wide-open', label: 'Wide open with a welcome mat', traits: ['secure', 'inviting'] },
+                        { value: 'unlocked', label: 'Closed but unlocked', traits: ['secure', 'balanced'] },
+                        { value: 'locked', label: 'Locked with a peephole', traits: ['avoidant', 'protective'] },
+                        { value: 'hidden', label: 'Hard to find or disguised', traits: ['fearful', 'defensive'] }
+                    ]
+                },
+                {
+                    id: 'garden',
+                    title: 'The Garden',
+                    prompt: 'There\'s a garden near the house. What does it look like?',
+                    icon: Flower,
+                    options: [
+                        { value: 'wild', label: 'Wild and untamed - natural chaos', traits: ['passionate', 'spontaneous'] },
+                        { value: 'shared', label: 'Shared community garden - tended by many', traits: ['supportive', 'collaborative'] },
+                        { value: 'perfect', label: 'Perfectly manicured - controlled and orderly', traits: ['pragmatic', 'controlling'] },
+                        { value: 'small', label: 'Small but carefully tended - personal sanctuary', traits: ['companionate', 'intentional'] }
+                    ]
+                },
+                {
+                    id: 'weather',
+                    title: 'The Sky',
+                    prompt: 'What\'s the weather like in this scene?',
+                    icon: Cloud,
+                    options: [
+                        { value: 'sunny', label: 'Bright sunshine - clear and warm', traits: ['secure', 'optimistic'] },
+                        { value: 'changing', label: 'Changing clouds - sometimes sun, sometimes shade', traits: ['anxious', 'variable'] },
+                        { value: 'stormy', label: 'Distant storm clouds - tension in the air', traits: ['fearful', 'apprehensive'] },
+                        { value: 'golden', label: 'Golden hour - soft, beautiful light', traits: ['romantic', 'idealistic'] }
+                    ]
+                },
+                {
+                    id: 'path',
+                    title: 'The Path',
+                    prompt: 'There\'s a path leading to the house. How does it look?',
+                    icon: Mountain,
+                    options: [
+                        { value: 'straight', label: 'Straight and clear - direct approach', traits: ['secure', 'straightforward'] },
+                        { value: 'winding', label: 'Winding and scenic - takes time to arrive', traits: ['companionate', 'patient'] },
+                        { value: 'overgrown', label: 'Overgrown and difficult - requires effort', traits: ['avoidant', 'challenging'] },
+                        { value: 'many', label: 'Multiple paths from different directions', traits: ['anxious', 'seeking'] }
+                    ]
+                },
+                {
+                    id: 'visitors',
+                    title: 'The Visitors',
+                    prompt: 'Someone approaches the house. What do you do?',
+                    icon: Users,
+                    options: [
+                        { value: 'welcome', label: 'Open the door and welcome them warmly', traits: ['secure', 'supportive'] },
+                        { value: 'wait', label: 'Wait to see what they want first', traits: ['pragmatic', 'cautious'] },
+                        { value: 'hide', label: 'Watch from a window before deciding', traits: ['avoidant', 'fearful'] },
+                        { value: 'excited', label: 'Rush out to meet them - you\'ve been waiting', traits: ['anxious', 'eager'] }
+                    ]
+                },
+                {
+                    id: 'interior',
+                    title: 'Inside the House',
+                    prompt: 'What does the main room look like inside?',
+                    icon: Heart,
+                    options: [
+                        { value: 'cozy', label: 'Cozy with two favorite chairs facing each other', traits: ['companionate', 'intimate'] },
+                        { value: 'open', label: 'Open space with room for gatherings', traits: ['supportive', 'generous'] },
+                        { value: 'library', label: 'Filled with personal treasures and solitary comforts', traits: ['avoidant', 'self-sufficient'] },
+                        { value: 'shrine', label: 'Decorated with photos and memories of loved ones', traits: ['anxious', 'sentimental'] }
+                    ]
+                },
+                {
+                    id: 'fire',
+                    title: 'The Hearth',
+                    prompt: 'Is there a fireplace? What\'s its condition?',
+                    icon: Sun,
+                    options: [
+                        { value: 'burning', label: 'Burning bright - always warm and ready', traits: ['passionate', 'intense'] },
+                        { value: 'ready', label: 'Ready to light when needed', traits: ['secure', 'responsive'] },
+                        { value: 'cold', label: 'Cold and rarely used', traits: ['avoidant', 'emotionally-distant'] },
+                        { value: 'variable', label: 'Sometimes roaring, sometimes cold - unpredictable', traits: ['anxious', 'unstable'] }
+                    ]
+                }
+            ];
+
+            const analyzeResults = () => {
+                const traitCounts = {};
+                
+                Object.values(answers).forEach(answer => {
+                    answer.traits.forEach(trait => {
+                        traitCounts[trait] = (traitCounts[trait] || 0) + 1;
+                    });
+                });
+
+                const sortedTraits = Object.entries(traitCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+
+                const attachmentMap = {
+                    secure: { style: 'Secure', color: 'green' },
+                    anxious: { style: 'Anxious', color: 'yellow' },
+                    avoidant: { style: 'Avoidant', color: 'blue' },
+                    fearful: { style: 'Fearful-Avoidant', color: 'purple' }
+                };
+
+                const roleMap = {
+                    supportive: { role: 'The Nurturer', desc: 'You create safe spaces and help others grow' },
+                    passionate: { role: 'The Flame', desc: 'You bring intensity and deep feeling to love' },
+                    companionate: { role: 'The Best Friend', desc: 'You build lasting bonds through shared life' },
+                    pragmatic: { role: 'The Architect', desc: 'You build relationships with intention and wisdom' },
+                    romantic: { role: 'The Poet', desc: 'You see beauty and magic in connection' },
+                    sacrificial: { role: 'The Martyr', desc: 'You give deeply, sometimes at your own expense' }
+                };
+
+                const attachmentScores = {};
+                ['secure', 'anxious', 'avoidant', 'fearful'].forEach(style => {
+                    attachmentScores[style] = traitCounts[style] || 0;
+                });
+
+                const primaryAttachment = Object.entries(attachmentScores)
+                    .sort((a, b) => b[1] - a[1])[0];
+
+                const roleScores = {};
+                ['supportive', 'passionate', 'companionate', 'pragmatic', 'romantic'].forEach(role => {
+                    roleScores[role] = traitCounts[role] || 0;
+                });
+
+                const primaryRole = Object.entries(roleScores)
+                    .sort((a, b) => b[1] - a[1])[0];
+
+                return {
+                    attachment: attachmentMap[primaryAttachment[0]],
+                    role: roleMap[primaryRole[0]] || { role: 'The Explorer', desc: 'You bring unique gifts to relationships' },
+                    traits: sortedTraits,
+                    details: generateDetailedAnalysis(primaryAttachment[0], primaryRole[0], traitCounts)
+                };
+            };
+
+            const generateDetailedAnalysis = (attachment, role, traits) => {
+                const analyses = {
+                    secure: {
+                        strengths: 'You have a stable sense of self and can balance closeness with independence. You trust others and feel comfortable being vulnerable.',
+                        growth: 'Continue nurturing open communication and remember that not everyone shares your secure foundation - patience helps.',
+                        love: 'You give and receive love freely, creating relationships where both partners can flourish.'
+                    },
+                    anxious: {
+                        strengths: 'You feel deeply and are highly attuned to your partner\'s needs. Your devotion and emotional availability are powerful gifts.',
+                        growth: 'Work on self-soothing and building security from within. Your worth isn\'t determined by another\'s attention.',
+                        love: 'You love with your whole heart - learning to trust that love doesn\'t require constant reassurance will deepen your connections.'
+                    },
+                    avoidant: {
+                        strengths: 'You\'re independent and self-sufficient. You bring stability and don\'t lose yourself in relationships.',
+                        growth: 'Practice letting people in gradually. Vulnerability isn\'t weakness - it\'s the gateway to deeper intimacy.',
+                        love: 'You can love deeply when you feel safe. Creating space for closeness without losing autonomy is your journey.'
+                    },
+                    fearful: {
+                        strengths: 'You\'re deeply sensitive and aware of relationship dynamics. Your caution protects you from repeating past hurts.',
+                        growth: 'Healing old wounds helps you approach new love with less fear. Not everyone will hurt you the way you\'ve been hurt.',
+                        love: 'You want connection but fear it too. Finding partners who move at your pace and honor your needs is key.'
+                    }
+                };
+
+                return analyses[attachment] || analyses.secure;
+            };
+
+            const handleAnswer = (answer) => {
+                setAnswers({ ...answers, [questions[step].id]: answer });
+                
+                if (step < questions.length - 1) {
+                    setStep(step + 1);
+                } else {
+                    setResults(analyzeResults());
+                }
+            };
+
+            const restart = () => {
+                setStep(0);
+                setAnswers({});
+                setResults(null);
+            };
+
+            if (results) {
+                const colors = {
+                    green: 'bg-green-50 border-green-200',
+                    yellow: 'bg-yellow-50 border-yellow-200',
+                    blue: 'bg-blue-50 border-blue-200',
+                    purple: 'bg-purple-50 border-purple-200'
+                };
+
+                return (
+                    <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+                        <div className="text-center mb-8">
+                            <h1 className="text-3xl font-bold text-gray-800 mb-2">Your Relationship Landscape</h1>
+                            <p className="text-gray-600">Based on the world you imagined</p>
+                        </div>
+
+                        <div className={`p-6 rounded-lg border-2 mb-6 ${colors[results.attachment.color]}`}>
+                            <h2 className="text-2xl font-bold mb-2">Attachment Style: {results.attachment.style}</h2>
+                            <div className="space-y-4 mt-4">
+                                <div>
+                                    <h3 className="font-semibold text-gray-700">Your Strengths:</h3>
+                                    <p className="text-gray-600">{results.details.strengths}</p>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-gray-700">Growth Edge:</h3>
+                                    <p className="text-gray-600">{results.details.growth}</p>
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-gray-700">In Love:</h3>
+                                    <p className="text-gray-600">{results.details.love}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-6 bg-pink-50 rounded-lg border-2 border-pink-200 mb-6">
+                            <h2 className="text-2xl font-bold mb-2">{results.role.role}</h2>
+                            <p className="text-gray-700 text-lg">{results.role.desc}</p>
+                        </div>
+
+                        <div className="bg-gray-50 p-6 rounded-lg mb-6">
+                            <h3 className="font-semibold text-gray-700 mb-3">Your Core Qualities:</h3>
+                            <div className="flex flex-wrap gap-2">
+                                {results.traits.map(([trait, count]) => (
+                                    <span key={trait} className="px-3 py-1 bg-white rounded-full text-sm border border-gray-300 capitalize">
+                                        {trait.replace('-', ' ')}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+                            <p className="text-sm text-gray-700">
+                                <strong>Remember:</strong> These patterns are tendencies, not destiny. Attachment styles can heal and evolve. 
+                                The awareness you gain here is the first step toward choosing how you want to love.
+                            </p>
+                        </div>
+
+                        <button 
+                            onClick={restart}
+                            className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition"
+                        >
+                            Explore Again
+                        </button>
+                    </div>
+                );
+            }
+
+            const currentQuestion = questions[step];
+            const Icon = currentQuestion.icon;
+
+            return (
+                <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+                    <div className="mb-6">
+                        <div className="flex justify-between items-center mb-4">
+                            <h1 className="text-2xl font-bold text-gray-800">The Relationship Landscape</h1>
+                            <span className="text-sm text-gray-500">Question {step + 1} of {questions.length}</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                                className="bg-gradient-to-r from-pink-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${((step + 1) / questions.length) * 100}%` }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="text-center mb-8">
+                        <Icon className="w-16 h-16 mx-auto mb-4 text-purple-500" />
+                        <h2 className="text-2xl font-bold text-gray-800 mb-2">{currentQuestion.title}</h2>
+                        <p className="text-gray-600 text-lg">{currentQuestion.prompt}</p>
+                    </div>
+
+                    <div className="space-y-3">
+                        {currentQuestion.options.map((option, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleAnswer(option)}
+                                className="w-full p-4 text-left border-2 border-gray-200 rounded-lg hover:border-purple-400 hover:bg-purple-50 transition-all duration-200 group"
+                            >
+                                <span className="text-gray-800 group-hover:text-purple-700 font-medium">
+                                    {option.label}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="mt-6 text-center text-sm text-gray-500">
+                        Choose the answer that feels most natural to you
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<RelationshipLandscapeGame />);
+    </script>
+</body>
+</html>
